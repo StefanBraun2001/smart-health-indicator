@@ -1,0 +1,32 @@
+{
+	"schemaVersion": 1,
+	"id": "smarthealthindicator",
+	"version": "${version}",
+	"name": "Smart Health Indicator",
+	"description": "Floating health numbers above/below nearby entities, a hold-to-peek key, and a MiniHUD-style crosshair health line.",
+	"authors": [
+		"Stefan Braun"
+	],
+	"contact": {
+		"homepage": "https://github.com/StefanBraun2001/smart-health-indicator",
+		"sources": "https://github.com/StefanBraun2001/smart-health-indicator",
+		"issues": "https://github.com/StefanBraun2001/smart-health-indicator/issues"
+	},
+	"license": "MIT",
+	"environment": "client",
+	"entrypoints": {
+		"client": [
+			"eu.stefanbraun612.smarthealthindicator.client.SmartHealthIndicatorClient"
+		],
+		"modmenu": [
+			"eu.stefanbraun612.smarthealthindicator.client.SmartHealthIndicatorModMenu"
+		]
+	},
+	"depends": {
+		"fabricloader": ">=0.19.3",
+		"minecraft": "~26.2",
+		"java": ">=25",
+		"fabric-api": "*",
+		"cloth-config2": "*"
+	}
+}
