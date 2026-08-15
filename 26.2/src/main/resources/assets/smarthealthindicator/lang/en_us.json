@@ -31,8 +31,20 @@
 	"text.autoconfig.smarthealthindicator.option.healthDecimalPlaces": "Health decimal places",
 	"text.autoconfig.smarthealthindicator.option.healthDecimalPlaces.@Tooltip": "0-2. Health is a float, e.g. '12.3 / 20.0' at 1 decimal place.",
 
+	"text.autoconfig.smarthealthindicator.option.useHeartsDisplay": "Use hearts instead of numbers",
+	"text.autoconfig.smarthealthindicator.option.useHeartsDisplay.@Tooltip": "Off (default): show health as text (e.g. '12.3 / 20.0'). On: show it as a row of vanilla heart icons instead. Applies to both the world overlay and the crosshair line.",
+
+	"text.autoconfig.smarthealthindicator.option.showFullHealthCheckmark": "Full-health checkmark",
+	"text.autoconfig.smarthealthindicator.option.showFullHealthCheckmark.@Tooltip": "Only used when 'Use hearts instead of numbers' is on. Hearts round to the nearest half-heart, so e.g. 19.7/20.0 looks identical to a genuine 20.0/20.0. On (default): mark the last heart with a small checkmark only when health truly equals max health.",
+
 	"text.autoconfig.smarthealthindicator.option.textScale": "Text scale",
 	"text.autoconfig.smarthealthindicator.option.textScale.@Tooltip": "1.0 = default size. Lower to shrink the text, e.g. 0.5-0.75. Applies to both the world overlay and the crosshair line.",
+
+	"text.autoconfig.smarthealthindicator.option.jockeyCombinedIndicator": "Combined jockey indicator",
+	"text.autoconfig.smarthealthindicator.option.jockeyCombinedIndicator.@Tooltip": "Off (default): a jockey (a living entity riding another living entity - boats/minecarts don't count) shows one line per member, like any other entity. On: shows exactly one indicator for the whole stack, cycling through each member's health every 2 seconds with a distinct color per stack position (bottom = blue-ish).",
+
+	"text.autoconfig.smarthealthindicator.option.jockeyShowPositionPrefix": "Jockey position prefix",
+	"text.autoconfig.smarthealthindicator.option.jockeyShowPositionPrefix.@Tooltip": "Only has an effect while 'Combined jockey indicator' is also on. Prefixes the health line with which stack member is currently shown: B(ottom)/T(op) for 2 members; for 3+, bottom is still B, top is still T, and everything between is M1, M2, ... going up.",
 
 	"text.autoconfig.smarthealthindicator.option.showThroughTransparentBlocks": "Show through transparent blocks",
 	"text.autoconfig.smarthealthindicator.option.showThroughTransparentBlocks.@Tooltip": "Opaque blocks (stone, dirt, doors, ...) always hide the overlay for everyone. This only controls non-occluding blocks (glass, leaves, water, ...), and only for whatever entity is currently under your crosshair: on (default), you see through them at your current target; off, any block hides it there too.",

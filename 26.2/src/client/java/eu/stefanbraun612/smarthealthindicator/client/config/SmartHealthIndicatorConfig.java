@@ -57,6 +57,20 @@ public class SmartHealthIndicatorConfig implements ConfigData {
 	@ConfigEntry.Gui.Tooltip
 	public boolean showEntityName = false;
 
+	// Off by default. When on, a jockey (a living entity riding another living entity -
+	// boats/minecarts don't count, since they aren't living entities) gets exactly one
+	// indicator for the whole stack instead of one per member, cycling through each
+	// member's health/name every 2 seconds with a distinct color per stack position
+	// (bottom = blue-ish) so you can tell who's currently shown.
+	@ConfigEntry.Gui.Tooltip
+	public boolean jockeyCombinedIndicator = false;
+
+	// Only has an effect while jockeyCombinedIndicator is also on. B(ottom)/T(op) for a
+	// 2-member stack; for 3+, the bottom is still B, the top is still T, and everything in
+	// between is numbered M1, M2, ... going up.
+	@ConfigEntry.Gui.Tooltip
+	public boolean jockeyShowPositionPrefix = true;
+
 	// The overlay always respects real occlusion - opaque blocks (stone, dirt, doors, ...)
 	// block it no matter what, for every entity. This only controls the borderline case of
 	// non-occluding blocks (glass, leaves, water, ...), and only for whatever entity is
@@ -74,6 +88,15 @@ public class SmartHealthIndicatorConfig implements ConfigData {
 	@ConfigEntry.Gui.Tooltip
 	@ConfigEntry.BoundedDiscrete(min = 0, max = 2)
 	public int healthDecimalPlaces = 1;
+
+	// Hearts can't show fractional health, so a mob resting on a partial point (e.g. 19.7)
+	// rounds to look full even though it isn't - see showFullHealthCheckmark below for how
+	// that ambiguity is resolved. Applies to both the world overlay and the crosshair line.
+	@ConfigEntry.Gui.Tooltip
+	public boolean useHeartsDisplay = false;
+
+	@ConfigEntry.Gui.Tooltip
+	public boolean showFullHealthCheckmark = true; // only used when useHeartsDisplay is on
 
 	// 1.0 = unchanged default size. Applies to both the world overlay text and the
 	// crosshair line. Clamped to a small positive minimum at render time so a stray 0 or

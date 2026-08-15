@@ -8,6 +8,8 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -19,6 +21,7 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -48,6 +51,27 @@ public class HealthOverlayHud implements HudElement {
 	// is a pure perf optimisation, never a correctness dependency, so simply dropping it
 	// once it gets large is fine; it just refills live on the next few frames.
 	private static final int MAX_CACHE_ENTRIES = 4096;
+
+	// Same sprites/sizing vanilla's own HUD health bar uses (net.minecraft.client.gui.Hud).
+	private static final Identifier HEART_CONTAINER_SPRITE = Identifier.withDefaultNamespace("hud/heart/container");
+	private static final Identifier HEART_FULL_SPRITE = Identifier.withDefaultNamespace("hud/heart/full");
+	private static final Identifier HEART_HALF_SPRITE = Identifier.withDefaultNamespace("hud/heart/half");
+	private static final int HEART_SIZE = 9;
+	private static final int HEART_STEP = 8;
+	private static final int CHECKMARK_COLOR = 0xFF55FF55;
+	// Tiny pixel-art checkmark (dx, dy pairs) drawn over the last heart's bottom-right
+	// corner - avoids depending on font glyph support for a check-mark character.
+	private static final int[][] CHECKMARK_PIXELS = {{0, 2}, {1, 3}, {2, 4}, {3, 2}, {4, 0}};
+
+	private static final long JOCKEY_CYCLE_MS = 2000;
+	// Bottom of the stack (the mount) first, then a distinct color per rider going up.
+	private static final int[] JOCKEY_COLORS = {
+			0xFF6699FF, // blue-ish - mount
+			0xFF55FF55, // green - 1st rider
+			0xFFFFCC55, // orange - 2nd rider
+			0xFFCC66FF, // purple - 3rd rider
+			0xFFFF6699, // pink - 4th+ rider
+	};
 
 	// Formatted "x / y" health text only - never the entity-presence/range check, which
 	// always runs live every frame regardless of caching (see renderWorldOverlay). Keyed
@@ -116,6 +140,15 @@ public class HealthOverlayHud implements HudElement {
 				continue;
 			}
 
+			if (config.jockeyCombinedIndicator && isJockeyMember(living)) {
+				if (isJockeyRider(living)) {
+					continue; // handled once below, when we reach the bottom of the stack
+				}
+				renderJockeyStack(graphics, font, client, level, player, config, mode, living, entityPos, eyePos,
+						crosshairTarget, partialTick);
+				continue;
+			}
+
 			float health = living.getHealth();
 			float maxHealth = living.getMaxHealth();
 			if (mode == SmartHealthIndicatorConfig.PassiveDisplayMode.DAMAGED_ONLY && health >= maxHealth) {
@@ -132,7 +165,7 @@ public class HealthOverlayHud implements HudElement {
 				Vec3 headPoint = entityPos.add(0.0, living.getBbHeight() + HEAD_ANCHOR_OFFSET, 0.0);
 				headVisible = hasLineOfSight(level, player, eyePos, headPoint, allowTransparent);
 				if (headVisible) {
-					drawAtWorldPoint(graphics, font, client, text, nameText, headPoint, scale);
+					drawAtWorldPoint(graphics, font, client, config, health, maxHealth, text, nameText, null, headPoint, scale, TEXT_COLOR);
 				}
 			}
 			if (config.showAtFeet) {
@@ -143,10 +176,108 @@ public class HealthOverlayHud implements HudElement {
 				if (!skipFeet) {
 					Vec3 feetPoint = entityPos.add(0.0, FEET_ANCHOR_OFFSET, 0.0);
 					if (hasLineOfSight(level, player, eyePos, feetPoint, allowTransparent)) {
-						drawAtWorldPoint(graphics, font, client, text, nameText, feetPoint, scale);
+						drawAtWorldPoint(graphics, font, client, config, health, maxHealth, text, nameText, null, feetPoint, scale, TEXT_COLOR);
 					}
 				}
 			}
+		}
+	}
+
+	/**
+	 * Renders exactly one indicator for an entire jockey stack (a living entity riding
+	 * another living entity, possibly several deep), cycling through each member's
+	 * health/name every {@link #JOCKEY_CYCLE_MS} with a color per stack position instead
+	 * of drawing one line per member.
+	 */
+	private void renderJockeyStack(GuiGraphicsExtractor graphics, Font font, Minecraft client, ClientLevel level,
+			LocalPlayer player, SmartHealthIndicatorConfig config, SmartHealthIndicatorConfig.PassiveDisplayMode mode,
+			LivingEntity root, Vec3 rootPos, Vec3 eyePos, LivingEntity crosshairTarget, float partialTick) {
+		List<LivingEntity> stack = new ArrayList<>();
+		collectJockeyStack(root, stack);
+		stack.removeIf(member -> !isCategoryAllowed(member, player, config));
+		if (stack.isEmpty()) {
+			return;
+		}
+
+		boolean anyDamaged = stack.stream().anyMatch(member -> member.getHealth() < member.getMaxHealth());
+		if (mode == SmartHealthIndicatorConfig.PassiveDisplayMode.DAMAGED_ONLY && !anyDamaged) {
+			return;
+		}
+
+		int activeIndex = (int) ((System.currentTimeMillis() / JOCKEY_CYCLE_MS) % stack.size());
+		LivingEntity active = stack.get(activeIndex);
+		int color = JOCKEY_COLORS[Math.min(activeIndex, JOCKEY_COLORS.length - 1)];
+		String prefix = config.jockeyShowPositionPrefix ? jockeyPositionPrefix(activeIndex, stack.size()) : null;
+
+		float health = active.getHealth();
+		float maxHealth = active.getMaxHealth();
+		String text = getHealthText(active, health, maxHealth, config);
+		String nameText = config.showEntityName ? active.getName().getString() : null;
+		boolean allowTransparent = config.showThroughTransparentBlocks && active == crosshairTarget;
+		float scale = Math.max(0.05f, config.textScale);
+
+		LivingEntity top = stack.get(stack.size() - 1);
+		Vec3 topPos = top.getPosition(partialTick);
+
+		boolean headVisible = false;
+		if (config.showAboveHead) {
+			Vec3 headPoint = topPos.add(0.0, top.getBbHeight() + HEAD_ANCHOR_OFFSET, 0.0);
+			headVisible = hasLineOfSight(level, player, eyePos, headPoint, allowTransparent);
+			if (headVisible) {
+				drawAtWorldPoint(graphics, font, client, config, health, maxHealth, text, nameText, prefix, headPoint, scale, color);
+			}
+		}
+		if (config.showAtFeet) {
+			boolean skipFeet = config.prioritizeHeadOverFeet && config.showAboveHead && headVisible;
+			if (!skipFeet) {
+				Vec3 feetPoint = rootPos.add(0.0, FEET_ANCHOR_OFFSET, 0.0);
+				if (hasLineOfSight(level, player, eyePos, feetPoint, allowTransparent)) {
+					drawAtWorldPoint(graphics, font, client, config, health, maxHealth, text, nameText, prefix, feetPoint, scale, color);
+				}
+			}
+		}
+	}
+
+	/** B(ottom)/T(op) for 2 members; 3+, bottom/top stay B/T, everything between is M1, M2, ... */
+	private static String jockeyPositionPrefix(int index, int stackSize) {
+		if (stackSize <= 1) {
+			return null;
+		}
+		if (index == 0) {
+			return "B";
+		}
+		if (index == stackSize - 1) {
+			return "T";
+		}
+		return "M" + index;
+	}
+
+	private static boolean hasLivingPassenger(Entity entity) {
+		for (Entity passenger : entity.getPassengers()) {
+			if (passenger instanceof LivingEntity) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	// A boat/minecart passenger's vehicle is never a LivingEntity, so this naturally
+	// excludes them from jockey handling without any explicit Boat/AbstractMinecart check.
+	private static boolean isJockeyRider(LivingEntity living) {
+		return living.getVehicle() instanceof LivingEntity;
+	}
+
+	private static boolean isJockeyMember(LivingEntity living) {
+		return isJockeyRider(living) || hasLivingPassenger(living);
+	}
+
+	/** Depth-first, bottom (root) to top, flattening any branching passenger chains. */
+	private static void collectJockeyStack(Entity entity, List<LivingEntity> out) {
+		if (entity instanceof LivingEntity living) {
+			out.add(living);
+		}
+		for (Entity passenger : entity.getPassengers()) {
+			collectJockeyStack(passenger, out);
 		}
 	}
 
@@ -240,8 +371,11 @@ public class HealthOverlayHud implements HudElement {
 		return false;
 	}
 
+	private static final int PREFIX_GAP = 2;
+
 	private void drawAtWorldPoint(GuiGraphicsExtractor graphics, Font font, Minecraft client,
-			String text, String nameText, Vec3 worldPoint, float scale) {
+			SmartHealthIndicatorConfig config, float health, float maxHealth, String text, String nameText,
+			String prefix, Vec3 worldPoint, float scale, int color) {
 		// Normalised device coordinates: x/y in [-1, 1], z > 1 means the point is behind
 		// the camera (same test vanilla's waypoint tracker uses).
 		Vec3 ndc = client.gameRenderer.projectPointToScreen(worldPoint);
@@ -254,24 +388,84 @@ public class HealthOverlayHud implements HudElement {
 		float screenX = (float) ((ndc.x * 0.5 + 0.5) * guiWidth);
 		float screenY = (float) ((1.0 - (ndc.y * 0.5 + 0.5)) * guiHeight);
 
-		float widestLine = Math.max(font.width(text), nameText != null ? font.width(nameText) : 0);
+		int totalHearts = config.useHeartsDisplay ? heartCount(maxHealth) : 0;
+		float contentWidth = config.useHeartsDisplay ? heartsRowWidth(totalHearts) : font.width(text);
+		float lineHeight = config.useHeartsDisplay ? HEART_SIZE : font.lineHeight;
+		float prefixWidth = prefix != null ? font.width(prefix) + PREFIX_GAP : 0;
+		float lineWidth = contentWidth + prefixWidth;
+		float widestLine = Math.max(lineWidth, nameText != null ? font.width(nameText) : 0);
 		float halfWidth = widestLine * scale / 2.0f;
 		float extraLineHeight = nameText != null ? font.lineHeight * scale : 0;
 		if (screenX + halfWidth < 0 || screenX - halfWidth > guiWidth
-				|| screenY + font.lineHeight * scale < 0 || screenY - extraLineHeight > guiHeight) {
+				|| screenY + lineHeight * scale < 0 || screenY - extraLineHeight > guiHeight) {
 			return;
 		}
 
 		// Scale in GUI pose space rather than pre-dividing the coordinates, so text stays
 		// crisp at any scale instead of being drawn at fractional pixel positions.
 		graphics.pose().pushMatrix();
-		graphics.pose().translate(screenX, screenY - font.lineHeight * scale / 2.0f);
+		graphics.pose().translate(screenX, screenY - lineHeight * scale / 2.0f);
 		graphics.pose().scale(scale, scale);
 		if (nameText != null) {
 			graphics.centeredText(font, nameText, 0, -font.lineHeight, TEXT_COLOR);
 		}
-		graphics.centeredText(font, text, 0, 0, TEXT_COLOR);
+
+		float leftEdge = -lineWidth / 2.0f;
+		if (prefix != null) {
+			int prefixCenter = Math.round(leftEdge + (prefixWidth - PREFIX_GAP) / 2.0f);
+			graphics.centeredText(font, prefix, prefixCenter, 0, color);
+		}
+		int contentCenter = Math.round(leftEdge + prefixWidth + contentWidth / 2.0f);
+		if (config.useHeartsDisplay) {
+			drawHeartsRow(graphics, health, maxHealth, config.showFullHealthCheckmark, contentCenter, 0, color);
+		} else {
+			graphics.centeredText(font, text, contentCenter, 0, color);
+		}
 		graphics.pose().popMatrix();
+	}
+
+	private static int heartCount(float maxHealth) {
+		int maxPoints = Math.max(1, Math.round(maxHealth));
+		return (maxPoints + 1) / 2;
+	}
+
+	private static int heartsRowWidth(int totalHearts) {
+		return totalHearts <= 0 ? 0 : (totalHearts - 1) * HEART_STEP + HEART_SIZE;
+	}
+
+	/** Draws a row of vanilla heart sprites, centered at local x=centerX, top edge at local y. */
+	private void drawHeartsRow(GuiGraphicsExtractor graphics, float health, float maxHealth,
+			boolean showCheckmark, int centerX, int y, int color) {
+		int healthPoints = Math.max(0, Math.round(health));
+		int totalHearts = heartCount(maxHealth);
+		int fullHearts = Math.min(healthPoints / 2, totalHearts);
+		boolean halfHeart = (healthPoints % 2) == 1 && fullHearts < totalHearts;
+		int startX = centerX - heartsRowWidth(totalHearts) / 2;
+
+		for (int i = 0; i < totalHearts; i++) {
+			int x = startX + i * HEART_STEP;
+			Identifier sprite;
+			if (i < fullHearts) {
+				sprite = HEART_FULL_SPRITE;
+			} else if (i == fullHearts && halfHeart) {
+				sprite = HEART_HALF_SPRITE;
+			} else {
+				sprite = HEART_CONTAINER_SPRITE;
+			}
+			graphics.blitSprite(RenderPipelines.GUI_TEXTURED, sprite, x, y, HEART_SIZE, HEART_SIZE, color);
+		}
+
+		// Hearts can't show the fractional health a mob might actually be resting on (e.g.
+		// 19.7/20.0 rounds to look identical to a genuine 20.0/20.0) - the checkmark marks
+		// the difference instead of pretending hearts have more precision than they do.
+		if (showCheckmark && totalHearts > 0 && Math.abs(health - maxHealth) < 0.001f) {
+			int lastHeartX = startX + (totalHearts - 1) * HEART_STEP;
+			for (int[] pixel : CHECKMARK_PIXELS) {
+				int px = lastHeartX + 4 + pixel[0];
+				int py = y + 4 + pixel[1];
+				graphics.fill(px, py, px + 1, py + 1, CHECKMARK_COLOR);
+			}
+		}
 	}
 
 	private void renderCrosshairLine(GuiGraphicsExtractor graphics, Font font, Minecraft client,
@@ -282,14 +476,20 @@ public class HealthOverlayHud implements HudElement {
 		}
 
 		String nameText = living.getName().getString();
-		String healthText = getHealthText(living, living.getHealth(), living.getMaxHealth(), config);
+		float health = living.getHealth();
+		float maxHealth = living.getMaxHealth();
+		String healthText = getHealthText(living, health, maxHealth, config);
 		float scale = Math.max(0.05f, config.textScale);
 
 		graphics.pose().pushMatrix();
 		graphics.pose().translate(graphics.guiWidth() / 2.0f, graphics.guiHeight() / 2.0f + CROSSHAIR_OFFSET_Y);
 		graphics.pose().scale(scale, scale);
 		graphics.centeredText(font, nameText, 0, -font.lineHeight, TEXT_COLOR);
-		graphics.centeredText(font, healthText, 0, 0, TEXT_COLOR);
+		if (config.useHeartsDisplay) {
+			drawHeartsRow(graphics, health, maxHealth, config.showFullHealthCheckmark, 0, 0, TEXT_COLOR);
+		} else {
+			graphics.centeredText(font, healthText, 0, 0, TEXT_COLOR);
+		}
 		graphics.pose().popMatrix();
 	}
 
