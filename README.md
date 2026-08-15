@@ -6,7 +6,7 @@ maintained, non-freezing replacement after older health-indicator mods on
 Modrinth either stopped getting updated or started showing stale/wrong
 health on multiplayer servers.
 
-Current build: **A0.1** (alpha, untested in-game), **MC 26.2 only**. Grab a
+Current build: **A0.1.1** (alpha, in-game tested), **MC 26.2 only**. Grab a
 built jar from the [Releases](../../releases) page, or build from source
 with `./gradlew build` inside `26.2/`.
 
@@ -21,15 +21,33 @@ Needs Fabric Loader + **Fabric API**. Also install **Cloth Config API**
 
 ## Features
 
-- **World overlay**: floating health text ("12.3 / 20.0", full float
-  precision, configurable decimal places) above an entity's head and/or at
-  its feet - either or both, independently toggleable.
+- **World overlay**: floating health above an entity's head and/or at its
+  feet - either or both, independently toggleable. Shown as text
+  ("12.3 / 20.0", full float precision, configurable decimal places) or,
+  optionally, as a row of vanilla heart icons instead.
   - Filter: off, only entities below full health, or every living entity
     in range.
   - Separate horizontal and vertical radius (blocks, float), checked
     independently.
+  - **Prioritize head over feet**: with both anchors on, shows only the
+    head text when it has a clear line of sight, falling back to feet only
+    when the head position itself is blocked (e.g. a 2-block-high space) -
+    avoids showing the same entity's health twice when nothing blocks
+    either anchor.
   - Optional entity-name line drawn above the health text (one toggle,
     applies to both anchor points).
+  - **Hearts display**: swaps the text for vanilla's own heart sprites
+    (same textures/sizing as your own health bar). Since hearts can't show
+    fractional health, a small checkmark is stamped on the last heart when
+    a mob is genuinely at full health (as opposed to rounding up to look
+    full, e.g. 19.7/20.0).
+  - **Combined jockey indicator**: a jockey (a living entity riding
+    another living entity - boats/minecarts don't count) can show one
+    indicator for the whole stack instead of one per member, cycling
+    through each member's health every 2 seconds with a distinct color per
+    stack position (bottom = blue-ish). An optional prefix marks which
+    member is currently shown: `B`/`T` for a 2-member stack, or
+    `B`/`M1`/`M2`/.../`T` for 3 or more.
   - Real occlusion: opaque blocks (stone, dirt, doors, ...) always hide it
     for every entity, no exceptions. Non-occluding blocks (glass, leaves,
     water, ...) can optionally still show through, but only for whatever
@@ -39,13 +57,14 @@ Needs Fabric Loader + **Fabric API**. Also install **Cloth Config API**
   every entity in range regardless of the configured filter. Configurable
   whether it forces "show all" outright or just respects your configured
   filter (falling back to "show all" only if that filter is set to off).
-- **Crosshair line**: name and health (float precision) of whatever living
-  entity you're currently aiming at, shown as two lines near the
-  crosshair, gated by your actual interaction reach.
+- **Crosshair line**: name and health (float precision, or hearts) of
+  whatever living entity you're currently aiming at, shown as two lines
+  near the crosshair, gated by your actual interaction reach.
 - **Entity filtering**: hostile/passive/players/self category toggles
   (using vanilla's own mob-category classification, not a hardcoded mob
-  list), plus per-entity-type and per-player-name blacklists. Applies to
-  both the world overlay and the crosshair line.
+  list), plus per-entity-type and per-player-name lists that can be used
+  as either a blacklist or a whitelist. Applies to both the world overlay
+  and the crosshair line.
 - **Text scale** option to shrink (or grow) all of the above.
 - **Optional health-text caching**: off by default (recomputing every
   frame is already cheap). When enabled, reuses formatted text for a
