@@ -16,6 +16,9 @@
 	"text.autoconfig.smarthealthindicator.option.showAtFeet": "Show at feet",
 	"text.autoconfig.smarthealthindicator.option.showAtFeet.@Tooltip": "Draw the health text at the entity's feet. Can be combined with 'Show above head'.",
 
+	"text.autoconfig.smarthealthindicator.option.prioritizeHeadOverFeet": "Prioritize head over feet",
+	"text.autoconfig.smarthealthindicator.option.prioritizeHeadOverFeet.@Tooltip": "Only matters when both 'Show above head' and 'Show at feet' are on. Off (default): both may render at once. On: show only the head text if it has a clear line of sight; falls back to the feet text only when the head position itself is blocked (e.g. a 2-block-high space).",
+
 	"text.autoconfig.smarthealthindicator.option.showEntityName": "Show entity name",
 	"text.autoconfig.smarthealthindicator.option.showEntityName.@Tooltip": "Off (default): only health text. On: also draw the entity's name on its own line above the health, for both 'Show above head' and 'Show at feet'.",
 
@@ -52,11 +55,17 @@
 	"text.autoconfig.smarthealthindicator.option.showSelf": "Show self",
 	"text.autoconfig.smarthealthindicator.option.showSelf.@Tooltip": "Off (default): never show an indicator for your own client player. On: also show one for yourself, e.g. useful in third-person view.",
 
-	"text.autoconfig.smarthealthindicator.option.entityTypeBlacklist": "Entity type blacklist",
-	"text.autoconfig.smarthealthindicator.option.entityTypeBlacklist.@Tooltip": "Exact registry IDs to always hide, e.g. 'minecraft:zombie'. Case-insensitive. Applies on top of the hostile/passive toggles above.",
+	"text.autoconfig.smarthealthindicator.option.entityTypeListMode": "Entity type list mode",
+	"text.autoconfig.smarthealthindicator.option.entityTypeListMode.@Tooltip": "BLACKLIST (default): show everything except the list below. WHITELIST: show only what's in the list below - an empty list then shows nothing.",
 
-	"text.autoconfig.smarthealthindicator.option.playerNameBlacklist": "Player name blacklist",
-	"text.autoconfig.smarthealthindicator.option.playerNameBlacklist.@Tooltip": "Exact usernames to always hide. Case-insensitive.",
+	"text.autoconfig.smarthealthindicator.option.entityTypeBlacklist": "Entity type list",
+	"text.autoconfig.smarthealthindicator.option.entityTypeBlacklist.@Tooltip": "Exact registry IDs, e.g. 'minecraft:zombie'. Case-insensitive. Meaning depends on 'Entity type list mode' above. Applies on top of the hostile/passive toggles above.",
+
+	"text.autoconfig.smarthealthindicator.option.playerNameListMode": "Player name list mode",
+	"text.autoconfig.smarthealthindicator.option.playerNameListMode.@Tooltip": "BLACKLIST (default): show every player except the list below. WHITELIST: show only the players in the list below - an empty list then shows nobody.",
+
+	"text.autoconfig.smarthealthindicator.option.playerNameBlacklist": "Player name list",
+	"text.autoconfig.smarthealthindicator.option.playerNameBlacklist.@Tooltip": "Exact usernames. Case-insensitive. Meaning depends on 'Player name list mode' above.",
 
 	"text.autoconfig.smarthealthindicator.option.showCrosshairLine": "Show crosshair line",
 	"text.autoconfig.smarthealthindicator.option.showCrosshairLine.@Tooltip": "On (default): show the name and health of whatever living entity you are looking at, within your interaction reach - name on its own line above the health."

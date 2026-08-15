@@ -44,6 +44,14 @@ public class SmartHealthIndicatorConfig implements ConfigData {
 	@ConfigEntry.Gui.Tooltip
 	public boolean showAtFeet = false;
 
+	// Only matters when both showAboveHead and showAtFeet are on. Off (default): both may
+	// render at once, so an entity with clear space on both ends shows the text twice.
+	// On: try the head anchor first; only fall back to the feet anchor if the head anchor
+	// itself has no line of sight (e.g. a 2-block-high space, where the head position is
+	// blocked by the ceiling but the feet position isn't).
+	@ConfigEntry.Gui.Tooltip
+	public boolean prioritizeHeadOverFeet = false;
+
 	// Single toggle for both anchor points - when on, the entity's name is drawn on its
 	// own line above the health text, whether that's above the head, at the feet, or both.
 	@ConfigEntry.Gui.Tooltip
@@ -101,8 +109,23 @@ public class SmartHealthIndicatorConfig implements ConfigData {
 	@ConfigEntry.Gui.Tooltip
 	public boolean showSelf = false; // your own client player, e.g. when viewed in third person
 
+	public enum ListMode {
+		// Show everything except what's in the list below.
+		BLACKLIST,
+		// Show only what's in the list below - an empty list then shows nothing.
+		WHITELIST
+	}
+
+	@ConfigEntry.Gui.Tooltip
+	@ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
+	public ListMode entityTypeListMode = ListMode.BLACKLIST;
+
 	@ConfigEntry.Gui.Tooltip
 	public List<String> entityTypeBlacklist = new ArrayList<>(); // exact registry IDs, e.g. "minecraft:zombie"
+
+	@ConfigEntry.Gui.Tooltip
+	@ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
+	public ListMode playerNameListMode = ListMode.BLACKLIST;
 
 	@ConfigEntry.Gui.Tooltip
 	public List<String> playerNameBlacklist = new ArrayList<>(); // exact player usernames, case-insensitive

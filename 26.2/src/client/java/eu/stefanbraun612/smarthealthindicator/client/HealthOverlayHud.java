@@ -20,6 +20,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -126,16 +127,24 @@ public class HealthOverlayHud implements HudElement {
 			boolean allowTransparent = config.showThroughTransparentBlocks && living == crosshairTarget;
 			float scale = Math.max(0.05f, config.textScale);
 
+			boolean headVisible = false;
 			if (config.showAboveHead) {
 				Vec3 headPoint = entityPos.add(0.0, living.getBbHeight() + HEAD_ANCHOR_OFFSET, 0.0);
-				if (hasLineOfSight(level, player, eyePos, headPoint, allowTransparent)) {
+				headVisible = hasLineOfSight(level, player, eyePos, headPoint, allowTransparent);
+				if (headVisible) {
 					drawAtWorldPoint(graphics, font, client, text, nameText, headPoint, scale);
 				}
 			}
 			if (config.showAtFeet) {
-				Vec3 feetPoint = entityPos.add(0.0, FEET_ANCHOR_OFFSET, 0.0);
-				if (hasLineOfSight(level, player, eyePos, feetPoint, allowTransparent)) {
-					drawAtWorldPoint(graphics, font, client, text, nameText, feetPoint, scale);
+				// With both anchors on and priority enabled, the head anchor already "won"
+				// if it was visible - skip feet entirely so the text isn't doubled. If the
+				// head anchor was blocked (or above-head is off), feet renders as normal.
+				boolean skipFeet = config.prioritizeHeadOverFeet && config.showAboveHead && headVisible;
+				if (!skipFeet) {
+					Vec3 feetPoint = entityPos.add(0.0, FEET_ANCHOR_OFFSET, 0.0);
+					if (hasLineOfSight(level, player, eyePos, feetPoint, allowTransparent)) {
+						drawAtWorldPoint(graphics, font, client, text, nameText, feetPoint, scale);
+					}
 				}
 			}
 		}
@@ -180,12 +189,7 @@ public class HealthOverlayHud implements HudElement {
 				return false;
 			}
 			String name = living.getName().getString();
-			for (String blocked : config.playerNameBlacklist) {
-				if (blocked.equalsIgnoreCase(name)) {
-					return false;
-				}
-			}
-			return true;
+			return matchesList(name, config.playerNameBlacklist, config.playerNameListMode);
 		}
 
 		boolean friendly = living.getType().getCategory().isFriendly();
@@ -196,12 +200,16 @@ public class HealthOverlayHud implements HudElement {
 			return false;
 		}
 		String typeId = EntityType.getKey(living.getType()).toString();
-		for (String blocked : config.entityTypeBlacklist) {
-			if (blocked.equalsIgnoreCase(typeId)) {
-				return false;
-			}
-		}
-		return true;
+		return matchesList(typeId, config.entityTypeBlacklist, config.entityTypeListMode);
+	}
+
+	/** BLACKLIST: allowed unless listed. WHITELIST: allowed only if listed (empty = none). */
+	private boolean matchesList(String value, List<String> list, SmartHealthIndicatorConfig.ListMode mode) {
+		boolean listed = list.stream().anyMatch(entry -> entry.equalsIgnoreCase(value));
+		return switch (mode) {
+			case BLACKLIST -> !listed;
+			case WHITELIST -> listed;
+		};
 	}
 
 	/**
