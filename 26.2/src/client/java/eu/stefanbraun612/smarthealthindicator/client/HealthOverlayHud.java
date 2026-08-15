@@ -35,6 +35,10 @@ public class HealthOverlayHud implements HudElement {
 	// Extra height above the entity's bounding box for the "above head" anchor, and how
 	// far below the entity's origin the "at feet" anchor sits.
 	private static final double HEAD_ANCHOR_OFFSET = 0.6;
+	// Positive offset raises the anchor above the entity's actual feet position (which
+	// sits exactly on the ground surface) - a negative/subtracted offset would put the
+	// point inside the solid ground block below, which the occlusion raycast then sees
+	// as blocked and never draws.
 	private static final double FEET_ANCHOR_OFFSET = 0.1;
 	// Bounds how many transparent blocks (glass panes stacked in a row, etc.) a single
 	// line-of-sight check will hop through before giving up and treating it as blocked.
@@ -129,7 +133,7 @@ public class HealthOverlayHud implements HudElement {
 				}
 			}
 			if (config.showAtFeet) {
-				Vec3 feetPoint = entityPos.subtract(0.0, FEET_ANCHOR_OFFSET, 0.0);
+				Vec3 feetPoint = entityPos.add(0.0, FEET_ANCHOR_OFFSET, 0.0);
 				if (hasLineOfSight(level, player, eyePos, feetPoint, allowTransparent)) {
 					drawAtWorldPoint(graphics, font, client, text, nameText, feetPoint, scale);
 				}
