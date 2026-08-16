@@ -6,7 +6,7 @@ maintained, non-freezing replacement after older health-indicator mods on
 Modrinth either stopped getting updated or started showing stale/wrong
 health on multiplayer servers.
 
-Current build: **A0.1.1** (alpha, in-game tested), **MC 26.2 only**. Grab a
+Current build: **A0.1.1.3** (alpha, in-game tested), **MC 26.2 only**. Grab a
 built jar from the [Releases](../../releases) page, or build from source
 with `./gradlew build` inside `26.2/`.
 
@@ -55,8 +55,14 @@ Needs Fabric Loader + **Fabric API**. Also install **Cloth Config API**
     radius-wide x-ray.
 - **Hold-to-peek key** (default **H**): while held, temporarily shows
   every entity in range regardless of the configured filter. Configurable
-  whether it forces "show all" outright or just respects your configured
-  filter (falling back to "show all" only if that filter is set to off).
+  behavior: force "show all", force "damaged only", or just respect your
+  configured filter (falling back to "show all" only if that filter is
+  set to off).
+- **Display toggle key** (default **G**): master on/off switch for the
+  whole mod's output (world overlay + crosshair line). Shows an
+  "ON"/"OFF" message above the hotbar when pressed. The setting lives in
+  the config (editable there directly too) and persists across restarts.
+  The hold-to-peek key still works even while the display is off.
 - **Crosshair line**: name and health (float precision, or hearts) of
   whatever living entity you're currently aiming at, shown as two lines
   near the crosshair, gated by your actual interaction reach.
