@@ -97,7 +97,7 @@ public class HealthOverlayHud implements HudElement {
 		SmartHealthIndicatorConfig config = SmartHealthIndicatorClient.config();
 		Font font = client.font;
 		float partialTick = deltaTracker.getGameTimeDeltaPartialTick(false);
-		boolean displayEnabled = SmartHealthIndicatorClient.isDisplayEnabled();
+		boolean displayEnabled = config.displayEnabled;
 
 		// The master toggle suppresses everything except the world overlay while actively
 		// peeking - peeking is meant to work as a quick "check anyway" override even with

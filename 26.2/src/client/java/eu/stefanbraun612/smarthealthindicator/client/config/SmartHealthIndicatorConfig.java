@@ -10,6 +10,15 @@ import java.util.List;
 @Config(name = "smarthealthindicator")
 public class SmartHealthIndicatorConfig implements ConfigData {
 
+	// --- General ---
+
+	// Manual master on/off switch for the whole mod's output (world overlay + crosshair
+	// line), toggled by the display keybind or editable here directly - either way it's
+	// saved, so it persists across restarts. The hold-to-peek key still works even while
+	// this is off, since it's meant as a quick "check anyway" override.
+	@ConfigEntry.Gui.Tooltip
+	public boolean displayEnabled = true;
+
 	// --- World overlay ---
 
 	public enum PassiveDisplayMode {

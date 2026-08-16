@@ -18,7 +18,6 @@ public class SmartHealthIndicatorClient implements ClientModInitializer {
 
 	private static KeyMapping peekKey;
 	private static KeyMapping displayToggleKey;
-	private static boolean displayEnabled = true;
 
 	@Override
 	public void onInitializeClient() {
@@ -48,7 +47,9 @@ public class SmartHealthIndicatorClient implements ClientModInitializer {
 
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			while (displayToggleKey.consumeClick()) {
-				displayEnabled = !displayEnabled;
+				SmartHealthIndicatorConfig config = config();
+				config.displayEnabled = !config.displayEnabled;
+				AutoConfig.getConfigHolder(SmartHealthIndicatorConfig.class).save();
 			}
 		});
 
@@ -62,11 +63,6 @@ public class SmartHealthIndicatorClient implements ClientModInitializer {
 	/** True while the hold-to-peek key is held, forcing the effective display mode to ALL. */
 	public static boolean isPeeking() {
 		return peekKey != null && peekKey.isDown();
-	}
-
-	/** Master on/off switch for the whole mod's output, flipped by the toggle-display key. */
-	public static boolean isDisplayEnabled() {
-		return displayEnabled;
 	}
 
 	public static SmartHealthIndicatorConfig config() {

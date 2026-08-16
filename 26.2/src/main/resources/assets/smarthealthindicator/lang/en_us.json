@@ -5,6 +5,9 @@
 
 	"text.autoconfig.smarthealthindicator.title": "Smart Health Indicator",
 
+	"text.autoconfig.smarthealthindicator.option.displayEnabled": "Display enabled",
+	"text.autoconfig.smarthealthindicator.option.displayEnabled.@Tooltip": "Manual master on/off switch for the whole mod's output, toggled by the display keybind below or editable here directly. The hold-to-peek key still works even while this is off.",
+
 	"text.autoconfig.smarthealthindicator.option.passiveDisplayMode": "Passive display mode",
 	"text.autoconfig.smarthealthindicator.option.passiveDisplayMode.@Tooltip": "OFF: no floating health text. DAMAGED_ONLY: only entities below full health. ALL: every living entity in range. What holding the peek key does with this is controlled by 'Peek key behavior' below.",
 
