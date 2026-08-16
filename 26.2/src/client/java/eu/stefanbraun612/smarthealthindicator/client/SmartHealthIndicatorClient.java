@@ -10,6 +10,7 @@ import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import org.lwjgl.glfw.GLFW;
 
@@ -50,6 +51,10 @@ public class SmartHealthIndicatorClient implements ClientModInitializer {
 				SmartHealthIndicatorConfig config = config();
 				config.displayEnabled = !config.displayEnabled;
 				AutoConfig.getConfigHolder(SmartHealthIndicatorConfig.class).save();
+				if (client.player != null) {
+					client.gui.hud.setOverlayMessage(Component.literal(
+							config.displayEnabled ? "Smart Health Indicator: ON" : "Smart Health Indicator: OFF"), false);
+				}
 			}
 		});
 
