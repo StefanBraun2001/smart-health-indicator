@@ -8,7 +8,7 @@
 	"text.autoconfig.smarthealthindicator.option.passiveDisplayMode.@Tooltip": "OFF: no floating health text. DAMAGED_ONLY: only entities below full health. ALL: every living entity in range. What holding the peek key does with this is controlled by 'Peek key behavior' below.",
 
 	"text.autoconfig.smarthealthindicator.option.peekKeyBehavior": "Peek key behavior",
-	"text.autoconfig.smarthealthindicator.option.peekKeyBehavior.@Tooltip": "SHOW_ALL (default): holding the peek key always shows every living entity, ignoring the configured filter. USE_CONFIGURED_MODE: holding it uses 'Passive display mode' as-is (e.g. stays DAMAGED_ONLY), falling back to ALL only if that mode is OFF.",
+	"text.autoconfig.smarthealthindicator.option.peekKeyBehavior.@Tooltip": "SHOW_ALL (default): holding the peek key always shows every living entity, ignoring the configured filter. DAMAGED_ONLY: holding it always shows only damaged entities, ignoring the configured filter. USE_CONFIGURED_MODE: holding it uses 'Passive display mode' as-is, falling back to ALL only if that mode is OFF.",
 
 	"text.autoconfig.smarthealthindicator.option.showAboveHead": "Show above head",
 	"text.autoconfig.smarthealthindicator.option.showAboveHead.@Tooltip": "Draw the health text above the entity's head.",

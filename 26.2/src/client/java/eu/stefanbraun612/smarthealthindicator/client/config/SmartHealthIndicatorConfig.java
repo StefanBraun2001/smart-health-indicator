@@ -28,6 +28,8 @@ public class SmartHealthIndicatorConfig implements ConfigData {
 	public enum PeekKeyBehavior {
 		// Ignore the configured filter entirely while peeking - show every living entity.
 		SHOW_ALL,
+		// Ignore the configured filter entirely while peeking - show only damaged entities.
+		DAMAGED_ONLY,
 		// Use passiveDisplayMode as configured while peeking (so DAMAGED_ONLY stays
 		// DAMAGED_ONLY instead of being upgraded to ALL); if it's OFF, falls back to ALL
 		// so the peek key always shows something.

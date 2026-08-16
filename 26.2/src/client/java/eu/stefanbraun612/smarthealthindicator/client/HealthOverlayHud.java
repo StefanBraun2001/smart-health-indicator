@@ -300,14 +300,15 @@ public class HealthOverlayHud implements HudElement {
 		if (!SmartHealthIndicatorClient.isPeeking()) {
 			return config.passiveDisplayMode;
 		}
-		if (config.peekKeyBehavior == SmartHealthIndicatorConfig.PeekKeyBehavior.SHOW_ALL) {
-			return SmartHealthIndicatorConfig.PassiveDisplayMode.ALL;
-		}
-		// USE_CONFIGURED_MODE: respect the configured filter while peeking, but OFF alone
-		// would make the peek key a no-op, so fall back to ALL only in that case.
-		return config.passiveDisplayMode == SmartHealthIndicatorConfig.PassiveDisplayMode.OFF
-				? SmartHealthIndicatorConfig.PassiveDisplayMode.ALL
-				: config.passiveDisplayMode;
+		return switch (config.peekKeyBehavior) {
+			case SHOW_ALL -> SmartHealthIndicatorConfig.PassiveDisplayMode.ALL;
+			case DAMAGED_ONLY -> SmartHealthIndicatorConfig.PassiveDisplayMode.DAMAGED_ONLY;
+			// USE_CONFIGURED_MODE: respect the configured filter while peeking, but OFF
+			// alone would make the peek key a no-op, so fall back to ALL only in that case.
+			case USE_CONFIGURED_MODE -> config.passiveDisplayMode == SmartHealthIndicatorConfig.PassiveDisplayMode.OFF
+					? SmartHealthIndicatorConfig.PassiveDisplayMode.ALL
+					: config.passiveDisplayMode;
+		};
 	}
 
 	/** Category (hostile/passive/players/self) and per-type/per-name blacklist checks. */
