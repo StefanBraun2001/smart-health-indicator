@@ -5,6 +5,7 @@ import eu.stefanbraun612.smarthealthindicator.client.config.SmartHealthIndicator
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
@@ -16,6 +17,8 @@ public class SmartHealthIndicatorClient implements ClientModInitializer {
 	public static final String MOD_ID = "smarthealthindicator";
 
 	private static KeyMapping peekKey;
+	private static KeyMapping displayToggleKey;
+	private static boolean displayEnabled = true;
 
 	@Override
 	public void onInitializeClient() {
@@ -31,10 +34,23 @@ public class SmartHealthIndicatorClient implements ClientModInitializer {
 				category
 		));
 
+		displayToggleKey = KeyMappingHelper.registerKeyMapping(new KeyMapping(
+				"key.smarthealthindicator.toggle_display",
+				InputConstants.Type.KEYSYM,
+				GLFW.GLFW_KEY_G,
+				category
+		));
+
 		HealthOverlayHud overlay = new HealthOverlayHud();
 		HudElementRegistry.addLast(
 				Identifier.fromNamespaceAndPath(MOD_ID, "health_overlay"),
 				overlay);
+
+		ClientTickEvents.END_CLIENT_TICK.register(client -> {
+			while (displayToggleKey.consumeClick()) {
+				displayEnabled = !displayEnabled;
+			}
+		});
 
 		// Cached health text must never survive a disconnect/rejoin or a switch to a
 		// different server - otherwise it's exactly the "stale/misleading on multiplayer"
@@ -46,6 +62,11 @@ public class SmartHealthIndicatorClient implements ClientModInitializer {
 	/** True while the hold-to-peek key is held, forcing the effective display mode to ALL. */
 	public static boolean isPeeking() {
 		return peekKey != null && peekKey.isDown();
+	}
+
+	/** Master on/off switch for the whole mod's output, flipped by the toggle-display key. */
+	public static boolean isDisplayEnabled() {
+		return displayEnabled;
 	}
 
 	public static SmartHealthIndicatorConfig config() {

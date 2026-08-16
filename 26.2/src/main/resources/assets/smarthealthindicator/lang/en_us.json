@@ -1,6 +1,7 @@
 {
 	"key.category.smarthealthindicator.main": "Smart Health Indicator",
 	"key.smarthealthindicator.peek": "Peek at all health (hold)",
+	"key.smarthealthindicator.toggle_display": "Toggle display on/off",
 
 	"text.autoconfig.smarthealthindicator.title": "Smart Health Indicator",
 
