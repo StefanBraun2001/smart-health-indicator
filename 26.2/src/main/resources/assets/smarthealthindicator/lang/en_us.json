@@ -6,83 +6,83 @@
 	"text.autoconfig.smarthealthindicator.title": "Smart Health Indicator",
 
 	"text.autoconfig.smarthealthindicator.option.displayEnabled": "Display enabled",
-	"text.autoconfig.smarthealthindicator.option.displayEnabled.@Tooltip": "Manual master on/off switch for the whole mod's output, toggled by the display keybind below or editable here directly. The hold-to-peek key still works even while this is off.",
+	"text.autoconfig.smarthealthindicator.option.displayEnabled.@Tooltip": "Master on/off switch, same as the toggle key. Peek key still works while off.",
 
 	"text.autoconfig.smarthealthindicator.option.passiveDisplayMode": "Passive display mode",
-	"text.autoconfig.smarthealthindicator.option.passiveDisplayMode.@Tooltip": "OFF: no floating health text. DAMAGED_ONLY: only entities below full health. ALL: every living entity in range. What holding the peek key does with this is controlled by 'Peek key behavior' below.",
+	"text.autoconfig.smarthealthindicator.option.passiveDisplayMode.@Tooltip": "OFF/DAMAGED_ONLY/ALL for the floating health text.",
 
 	"text.autoconfig.smarthealthindicator.option.peekKeyBehavior": "Peek key behavior",
-	"text.autoconfig.smarthealthindicator.option.peekKeyBehavior.@Tooltip": "SHOW_ALL (default): holding the peek key always shows every living entity, ignoring the configured filter. DAMAGED_ONLY: holding it always shows only damaged entities, ignoring the configured filter. USE_CONFIGURED_MODE: holding it uses 'Passive display mode' as-is, falling back to ALL only if that mode is OFF.",
+	"text.autoconfig.smarthealthindicator.option.peekKeyBehavior.@Tooltip": "What holding the peek key shows, relative to the passive mode above.",
 
 	"text.autoconfig.smarthealthindicator.option.showAboveHead": "Show above head",
 	"text.autoconfig.smarthealthindicator.option.showAboveHead.@Tooltip": "Draw the health text above the entity's head.",
 
 	"text.autoconfig.smarthealthindicator.option.showAtFeet": "Show at feet",
-	"text.autoconfig.smarthealthindicator.option.showAtFeet.@Tooltip": "Draw the health text at the entity's feet. Can be combined with 'Show above head'.",
+	"text.autoconfig.smarthealthindicator.option.showAtFeet.@Tooltip": "Draw the health text at the entity's feet.",
 
 	"text.autoconfig.smarthealthindicator.option.prioritizeHeadOverFeet": "Prioritize head over feet",
-	"text.autoconfig.smarthealthindicator.option.prioritizeHeadOverFeet.@Tooltip": "Only matters when both 'Show above head' and 'Show at feet' are on. Off (default): both may render at once. On: show only the head text if it has a clear line of sight; falls back to the feet text only when the head position itself is blocked (e.g. a 2-block-high space).",
+	"text.autoconfig.smarthealthindicator.option.prioritizeHeadOverFeet.@Tooltip": "With both anchors on, show only head unless it's blocked (avoids double-rendering).",
 
 	"text.autoconfig.smarthealthindicator.option.showEntityName": "Show entity name",
-	"text.autoconfig.smarthealthindicator.option.showEntityName.@Tooltip": "Off (default): only health text. On: also draw the entity's name on its own line above the health, for both 'Show above head' and 'Show at feet'.",
+	"text.autoconfig.smarthealthindicator.option.showEntityName.@Tooltip": "Draw the entity's name on its own line above the health.",
 
 	"text.autoconfig.smarthealthindicator.option.horizontalRadius": "Horizontal radius (blocks)",
-	"text.autoconfig.smarthealthindicator.option.horizontalRadius.@Tooltip": "Combined X/Z distance from you. Checked independently of the vertical radius.",
+	"text.autoconfig.smarthealthindicator.option.horizontalRadius.@Tooltip": "Combined X/Z distance from you, checked independently of the vertical radius.",
 
 	"text.autoconfig.smarthealthindicator.option.verticalRadius": "Vertical radius (blocks)",
-	"text.autoconfig.smarthealthindicator.option.verticalRadius.@Tooltip": "Y distance from you. Checked independently of the horizontal radius.",
+	"text.autoconfig.smarthealthindicator.option.verticalRadius.@Tooltip": "Y distance from you, checked independently of the horizontal radius.",
 
 	"text.autoconfig.smarthealthindicator.option.healthDecimalPlaces": "Health decimal places",
-	"text.autoconfig.smarthealthindicator.option.healthDecimalPlaces.@Tooltip": "0-2. Health is a float, e.g. '12.3 / 20.0' at 1 decimal place.",
+	"text.autoconfig.smarthealthindicator.option.healthDecimalPlaces.@Tooltip": "0-2 decimal places for the health value.",
 
 	"text.autoconfig.smarthealthindicator.option.useHeartsDisplay": "Use hearts instead of numbers",
-	"text.autoconfig.smarthealthindicator.option.useHeartsDisplay.@Tooltip": "Off (default): show health as text (e.g. '12.3 / 20.0'). On: show it as a row of vanilla heart icons instead. Applies to both the world overlay and the crosshair line.",
+	"text.autoconfig.smarthealthindicator.option.useHeartsDisplay.@Tooltip": "Show vanilla heart icons instead of text.",
 
 	"text.autoconfig.smarthealthindicator.option.showFullHealthCheckmark": "Full-health checkmark",
-	"text.autoconfig.smarthealthindicator.option.showFullHealthCheckmark.@Tooltip": "Only used when 'Use hearts instead of numbers' is on. Hearts round to the nearest half-heart, so e.g. 19.7/20.0 looks identical to a genuine 20.0/20.0. On (default): mark the last heart with a small checkmark only when health truly equals max health.",
+	"text.autoconfig.smarthealthindicator.option.showFullHealthCheckmark.@Tooltip": "Mark the last heart when health is truly at max, not just rounded up.",
 
 	"text.autoconfig.smarthealthindicator.option.textScale": "Text scale",
-	"text.autoconfig.smarthealthindicator.option.textScale.@Tooltip": "1.0 = default size. Lower to shrink the text, e.g. 0.5-0.75. Applies to both the world overlay and the crosshair line.",
+	"text.autoconfig.smarthealthindicator.option.textScale.@Tooltip": "1.0 = default size. Applies to both the overlay and the crosshair line.",
 
 	"text.autoconfig.smarthealthindicator.option.jockeyCombinedIndicator": "Combined jockey indicator",
-	"text.autoconfig.smarthealthindicator.option.jockeyCombinedIndicator.@Tooltip": "Off (default): a jockey (a living entity riding another living entity - boats/minecarts don't count) shows one line per member, like any other entity. On: shows exactly one indicator for the whole stack, cycling through each member's health every 2 seconds with a distinct color per stack position (bottom = blue-ish).",
+	"text.autoconfig.smarthealthindicator.option.jockeyCombinedIndicator.@Tooltip": "One cycling indicator per jockey stack instead of one line per member.",
 
 	"text.autoconfig.smarthealthindicator.option.jockeyShowPositionPrefix": "Jockey position prefix",
-	"text.autoconfig.smarthealthindicator.option.jockeyShowPositionPrefix.@Tooltip": "Only has an effect while 'Combined jockey indicator' is also on. Prefixes the health line with which stack member is currently shown: B(ottom)/T(op) for 2 members; for 3+, bottom is still B, top is still T, and everything between is M1, M2, ... going up.",
+	"text.autoconfig.smarthealthindicator.option.jockeyShowPositionPrefix.@Tooltip": "Prefix the jockey line with B/M1/M2/T for which member is shown.",
 
 	"text.autoconfig.smarthealthindicator.option.showThroughTransparentBlocks": "Show through transparent blocks",
-	"text.autoconfig.smarthealthindicator.option.showThroughTransparentBlocks.@Tooltip": "Opaque blocks (stone, dirt, doors, ...) always hide the overlay for everyone. This only controls non-occluding blocks (glass, leaves, water, ...), and only for whatever entity is currently under your crosshair: on (default), you see through them at your current target; off, any block hides it there too.",
+	"text.autoconfig.smarthealthindicator.option.showThroughTransparentBlocks.@Tooltip": "Glass/leaves/water don't hide your crosshair target's indicator.",
 
 	"text.autoconfig.smarthealthindicator.option.cacheHealthText": "Cache health text",
-	"text.autoconfig.smarthealthindicator.option.cacheHealthText.@Tooltip": "Off (default): health text is recomputed live every frame. On: reuse the formatted text for up to 'Cache duration' before refreshing, to reduce cost with many nearby entities. Entity presence/range is always checked live regardless of this setting.",
+	"text.autoconfig.smarthealthindicator.option.cacheHealthText.@Tooltip": "Reuse formatted text briefly instead of recomputing every frame.",
 
 	"text.autoconfig.smarthealthindicator.option.cacheDurationMs": "Cache duration (ms)",
-	"text.autoconfig.smarthealthindicator.option.cacheDurationMs.@Tooltip": "0-1000ms. Only used when 'Cache health text' is on. Expires by real time, not game ticks, so a laggy server can't leave it stuck showing stale numbers.",
+	"text.autoconfig.smarthealthindicator.option.cacheDurationMs.@Tooltip": "0-1000ms. Only used when Cache health text is on.",
 
 	"text.autoconfig.smarthealthindicator.option.showHostile": "Show hostile mobs",
-	"text.autoconfig.smarthealthindicator.option.showHostile.@Tooltip": "Entities whose mob category is not friendly (zombies, skeletons, ...).",
+	"text.autoconfig.smarthealthindicator.option.showHostile.@Tooltip": "Entities whose mob category is not friendly.",
 
 	"text.autoconfig.smarthealthindicator.option.showPassive": "Show passive mobs",
-	"text.autoconfig.smarthealthindicator.option.showPassive.@Tooltip": "Entities whose mob category is friendly (cows, villagers, ...).",
+	"text.autoconfig.smarthealthindicator.option.showPassive.@Tooltip": "Entities whose mob category is friendly.",
 
 	"text.autoconfig.smarthealthindicator.option.showPlayers": "Show other players",
-	"text.autoconfig.smarthealthindicator.option.showPlayers.@Tooltip": "Other players in the world. Does not affect yourself - see 'Show self' below.",
+	"text.autoconfig.smarthealthindicator.option.showPlayers.@Tooltip": "Other players in the world, not yourself.",
 
 	"text.autoconfig.smarthealthindicator.option.showSelf": "Show self",
-	"text.autoconfig.smarthealthindicator.option.showSelf.@Tooltip": "Off (default): never show an indicator for your own client player. On: also show one for yourself, e.g. useful in third-person view.",
+	"text.autoconfig.smarthealthindicator.option.showSelf.@Tooltip": "Also show an indicator for your own client player.",
 
 	"text.autoconfig.smarthealthindicator.option.entityTypeListMode": "Entity type list mode",
-	"text.autoconfig.smarthealthindicator.option.entityTypeListMode.@Tooltip": "BLACKLIST (default): show everything except the list below. WHITELIST: show only what's in the list below - an empty list then shows nothing.",
+	"text.autoconfig.smarthealthindicator.option.entityTypeListMode.@Tooltip": "BLACKLIST or WHITELIST for the entity type list below.",
 
 	"text.autoconfig.smarthealthindicator.option.entityTypeBlacklist": "Entity type list",
-	"text.autoconfig.smarthealthindicator.option.entityTypeBlacklist.@Tooltip": "Exact registry IDs, e.g. 'minecraft:zombie'. Case-insensitive. Meaning depends on 'Entity type list mode' above. Applies on top of the hostile/passive toggles above.",
+	"text.autoconfig.smarthealthindicator.option.entityTypeBlacklist.@Tooltip": "Exact registry IDs, e.g. 'minecraft:zombie'.",
 
 	"text.autoconfig.smarthealthindicator.option.playerNameListMode": "Player name list mode",
-	"text.autoconfig.smarthealthindicator.option.playerNameListMode.@Tooltip": "BLACKLIST (default): show every player except the list below. WHITELIST: show only the players in the list below - an empty list then shows nobody.",
+	"text.autoconfig.smarthealthindicator.option.playerNameListMode.@Tooltip": "BLACKLIST or WHITELIST for the player name list below.",
 
 	"text.autoconfig.smarthealthindicator.option.playerNameBlacklist": "Player name list",
-	"text.autoconfig.smarthealthindicator.option.playerNameBlacklist.@Tooltip": "Exact usernames. Case-insensitive. Meaning depends on 'Player name list mode' above.",
+	"text.autoconfig.smarthealthindicator.option.playerNameBlacklist.@Tooltip": "Exact usernames, case-insensitive.",
 
 	"text.autoconfig.smarthealthindicator.option.showCrosshairLine": "Show crosshair line",
-	"text.autoconfig.smarthealthindicator.option.showCrosshairLine.@Tooltip": "On (default): show the name and health of whatever living entity you are looking at, within your interaction reach - name on its own line above the health."
+	"text.autoconfig.smarthealthindicator.option.showCrosshairLine.@Tooltip": "Name and health of whatever entity you're aiming at."
 }

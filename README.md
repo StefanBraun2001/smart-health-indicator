@@ -6,9 +6,10 @@ maintained, non-freezing replacement after older health-indicator mods on
 Modrinth either stopped getting updated or started showing stale/wrong
 health on multiplayer servers.
 
-Current build: **A0.1.1.3** (alpha, in-game tested), **MC 26.2 only**. Grab a
+Current build: **A0.1.1.4** (alpha, in-game tested), **MC 26.2 only**. Grab a
 built jar from the [Releases](../../releases) page, or build from source
-with `./gradlew build` inside `26.2/`.
+with `./gradlew build` inside `26.2/`. See [docs/GUIDE.md](docs/GUIDE.md) for
+a full walkthrough of every setting.
 
 **GitHub-only, not on Modrinth.** A subsequent, silent change to
 Modrinth's rules disqualifies this mod from that platform, so GitHub
