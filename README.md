@@ -6,7 +6,7 @@ maintained, non-freezing replacement after older health-indicator mods on
 Modrinth either stopped getting updated or started showing stale/wrong
 health on multiplayer servers.
 
-Current build: **A0.1.1.5** (alpha, in-game tested), **MC 26.2 only**. Grab a
+Current build: **A0.1.2** (alpha, in-game tested), **MC 26.2 only**. Grab a
 built jar from the [Releases](../../releases) page, or build from source
 with `./gradlew build` inside `26.2/`. See [docs/GUIDE.md](docs/GUIDE.md) for
 a full walkthrough of every setting.
@@ -79,7 +79,10 @@ Needs Fabric Loader + **Fabric API**. Also install **Cloth Config API**
   ticks, and is cleared on disconnect/rejoin, so a stalled or laggy server
   connection can never leave stale numbers stuck on screen. Entity
   presence/range is always checked live regardless of this setting.
-- Cloth Config screen + Mod Menu entry.
+- Cloth Config screen + Mod Menu entry, split into tabs (General, Overlay,
+  Jockeys, Filtering) with settings that only matter in a specific
+  configuration (e.g. the full-health checkmark, the cache duration) hidden
+  until the setting they depend on is actually turned on.
 
 ## Building from source
 

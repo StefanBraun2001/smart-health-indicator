@@ -5,6 +5,11 @@
 
 	"text.autoconfig.smarthealthindicator.title": "Smart Health Indicator",
 
+	"text.autoconfig.smarthealthindicator.category.general": "General",
+	"text.autoconfig.smarthealthindicator.category.overlay": "Overlay",
+	"text.autoconfig.smarthealthindicator.category.jockeys": "Jockeys",
+	"text.autoconfig.smarthealthindicator.category.filtering": "Filtering",
+
 	"text.autoconfig.smarthealthindicator.option.displayEnabled": "Display enabled",
 	"text.autoconfig.smarthealthindicator.option.displayEnabled.@Tooltip": "Master on/off switch, same as the toggle key. Peek key still works while off.",
 
