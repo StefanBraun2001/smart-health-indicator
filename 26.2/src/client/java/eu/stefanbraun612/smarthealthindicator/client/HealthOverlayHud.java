@@ -167,11 +167,13 @@ public class HealthOverlayHud implements HudElement {
 			float scale = Math.max(0.05f, config.textScale);
 
 			boolean headVisible = false;
+			boolean anyAnchorDrawn = false;
 			if (config.showAboveHead) {
 				Vec3 headPoint = entityPos.add(0.0, living.getBbHeight() + HEAD_ANCHOR_OFFSET, 0.0);
 				headVisible = hasLineOfSight(level, player, eyePos, headPoint, allowTransparent);
 				if (headVisible) {
 					drawAtWorldPoint(graphics, font, client, config, health, maxHealth, text, nameText, null, headPoint, scale, TEXT_COLOR);
+					anyAnchorDrawn = true;
 				}
 			}
 			if (config.showAtFeet) {
@@ -183,7 +185,19 @@ public class HealthOverlayHud implements HudElement {
 					Vec3 feetPoint = entityPos.add(0.0, FEET_ANCHOR_OFFSET, 0.0);
 					if (hasLineOfSight(level, player, eyePos, feetPoint, allowTransparent)) {
 						drawAtWorldPoint(graphics, font, client, config, health, maxHealth, text, nameText, null, feetPoint, scale, TEXT_COLOR);
+						anyAnchorDrawn = true;
 					}
+				}
+			}
+			// Both configured anchors overshoot the entity's actual body (head adds extra
+			// clearance above the bounding box, feet can end up elevated too, e.g. a mob
+			// seated in a boat inside a snug 2-block gap gets pushed into the ceiling by the
+			// boat's own height) - a fallback at eye height, with no extra offset, is far
+			// more likely to still be inside the available clear space when that happens.
+			if (!anyAnchorDrawn) {
+				Vec3 eyeLevelPoint = entityPos.add(0.0, living.getEyeHeight(), 0.0);
+				if (hasLineOfSight(level, player, eyePos, eyeLevelPoint, allowTransparent)) {
+					drawAtWorldPoint(graphics, font, client, config, health, maxHealth, text, nameText, null, eyeLevelPoint, scale, TEXT_COLOR);
 				}
 			}
 		}
@@ -226,11 +240,13 @@ public class HealthOverlayHud implements HudElement {
 		Vec3 topPos = top.getPosition(partialTick);
 
 		boolean headVisible = false;
+		boolean anyAnchorDrawn = false;
 		if (config.showAboveHead) {
 			Vec3 headPoint = topPos.add(0.0, top.getBbHeight() + HEAD_ANCHOR_OFFSET, 0.0);
 			headVisible = hasLineOfSight(level, player, eyePos, headPoint, allowTransparent);
 			if (headVisible) {
 				drawAtWorldPoint(graphics, font, client, config, health, maxHealth, text, nameText, prefix, headPoint, scale, color);
+				anyAnchorDrawn = true;
 			}
 		}
 		if (config.showAtFeet) {
@@ -239,7 +255,20 @@ public class HealthOverlayHud implements HudElement {
 				Vec3 feetPoint = rootPos.add(0.0, FEET_ANCHOR_OFFSET, 0.0);
 				if (hasLineOfSight(level, player, eyePos, feetPoint, allowTransparent)) {
 					drawAtWorldPoint(graphics, font, client, config, health, maxHealth, text, nameText, prefix, feetPoint, scale, color);
+					anyAnchorDrawn = true;
 				}
+			}
+		}
+		// Same rationale as the non-jockey fallback: the stack's combined head/feet anchors
+		// (built from the top/bottom members' own bounding boxes) can both overshoot the
+		// available space, e.g. a jockey stack seated in a boat in a snug gap - fall back to
+		// the midpoint between the stack's true bottom and top, no extra offset either way.
+		if (!anyAnchorDrawn) {
+			double lowY = rootPos.y;
+			double highY = topPos.y + top.getBbHeight();
+			Vec3 midPoint = new Vec3(rootPos.x, (lowY + highY) / 2.0, rootPos.z);
+			if (hasLineOfSight(level, player, eyePos, midPoint, allowTransparent)) {
+				drawAtWorldPoint(graphics, font, client, config, health, maxHealth, text, nameText, prefix, midPoint, scale, color);
 			}
 		}
 	}
